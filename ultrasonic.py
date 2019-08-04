@@ -3,10 +3,12 @@ import time
 
 class ultraSound:
 	TRIG = 20 
-	ECHO = 21
-	def __init__(self):
+	#ECHO = 21
+	def __init__(self,echo):
 		GPIO.setmode(GPIO.BCM)
 		GPIO.setwarnings(False)
+		#self.TRIG=trig
+		self.ECHO=echo
 		GPIO.setup(self.TRIG,GPIO.OUT)
 		GPIO.setup(self.ECHO,GPIO.IN)
 	
@@ -32,7 +34,7 @@ class ultraSound:
 		return distance;
 
 
-#sensor=ultraSound();
+#sensor=ultraSound(21);
 #while True:
 	#sensor.readData();
 

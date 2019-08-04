@@ -1,8 +1,10 @@
 from ultrasonic import *
 from dbHelper import *
+from raingauge import *
 import logging
 import datetime
 import time
+import array
 
 import urllib
 import urllib2
@@ -56,18 +58,32 @@ def sendIt():
 							return;
 		else:
 			return;
+			
+
 if __name__=='__main__':
 	try:
 		db= Database();
-		sensor= ultraSound();
+		sensor= ultraSound(21);
 		l_id=1;
+		holding1=False;
 		while True:
 			d=0;
+			checkArray=array.array('d',[]);
 			i=0;
-			while (i<5):
-				d+=sensor.readData();
+			while i<4:
+				checkArray.insert(i,sensor.readData());
+				if(i>=2):
+					if(abs(checkArray[i-2]-checkArray[i-1])>1.5 or abs(checkArray[i-1]-checkArray[i])>1.5 or
+					abs(checkArray[i]-checkArray[i-2])>1.5):
+						d-=checkArray[i-1];
+						d-=checkArray[i-2];
+						i=i-2;
+						time.sleep(0.1);
+						continue;
+				d+=checkArray[i];
+				time.sleep(0.1);
 				i=i+1;
-			data=round(d/6,2);
+			data=round(d/4,2);
 			print(data);
 			d=datetime.datetime.now();
 			if(d.month<10):
@@ -87,6 +103,8 @@ if __name__=='__main__':
 			db.insert(query);
 			sendIt();
 			time.sleep(1);
+			holding1=raingauge(1,holding1);
+			
 			
 			
 
