@@ -2,6 +2,7 @@ from ultrasonic import *
 from dbHelper import *
 from raingauge import *
 import logging
+import traceback
 import datetime
 import time
 import array
@@ -66,6 +67,8 @@ if __name__=='__main__':
 		sensor= ultraSound(21);
 		l_id=1;
 		holding1=False;
+		holding2=False;
+		holding3=False;
 		while True:
 			d=0;
 			checkArray=array.array('d',[]);
@@ -84,7 +87,7 @@ if __name__=='__main__':
 				time.sleep(0.1);
 				i=i+1;
 			data=round(d/4,2);
-			print(data);
+			print("River:"+str(data));
 			d=datetime.datetime.now();
 			if(d.month<10):
 				mm='0'+str(d.month);
@@ -104,6 +107,8 @@ if __name__=='__main__':
 			sendIt();
 			time.sleep(1);
 			holding1=raingauge(1,holding1);
+			holding2=raingauge(2,holding2);
+			holding3=raingauge(3,holding3);
 			
 			
 			

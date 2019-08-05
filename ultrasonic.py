@@ -21,8 +21,11 @@ class ultraSound:
 		GPIO.output(self.TRIG, False)                 
 		pulse_start=0;
 		pulse_end=0;
+		timeout=time.time();
 		while GPIO.input(self.ECHO)==0:               
 			pulse_start = time.time()              
+			if((pulse_start-timeout)>1):
+				return 200;
 		while GPIO.input(self.ECHO)==1:               
 			pulse_end = time.time()                
 		
@@ -34,9 +37,9 @@ class ultraSound:
 		return distance;
 
 
-#sensor=ultraSound(21);
+#sensor=ultraSound(16,6);
 #while True:
-	#sensor.readData();
+	#print(sensor.readData());
 
  
 

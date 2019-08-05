@@ -7,13 +7,13 @@ import array
 def raingauge(id,holding):
 	if(id==1):
 		#pin of first raingauge
-		sensor=ultraSound(21);
+		sensor=ultraSound(26);
 		delay=10;
 	elif(id==2):
-		sensor=ultraSound(21);
+		sensor=ultraSound(19);
 		delay=20;
 	else:
-		sensor=ultraSound(21);
+		sensor=ultraSound(16);
 		delay=30;
 	db=Database();
 	query="SELECT * FROM raingauge WHERE id=%s"%(id);
@@ -36,7 +36,9 @@ def raingauge(id,holding):
 			time.sleep(0.1);
 			i=i+1;
 		distance=round(d/4,2);
-		print(distance);
+		'''
+		distance=sensor.readData();'''
+		print("Raingauge"+str(id)+"="+str(distance));
 		if(len(data[0]['previous'])==0):
 			query="UPDATE raingauge SET previous=%s WHERE id=%s"%(distance,id);
 			db.insert(query);
@@ -44,11 +46,11 @@ def raingauge(id,holding):
 			return holding;
 		else:
 			diff=float(data[0]['previous'])-distance;
-			if(diff<-0.5):
+			if(diff<-1):
 				query="UPDATE raingauge SET previous=%s WHERE id=%s"%(distance,id);
 				db.insert(query);
 				print("Change detected and updated");
-			elif(diff>0.5):
+			elif(diff>1):
 				now=time.time();
 				if(not(holding)):
 					query="UPDATE raingauge SET current=%s,datetime=%s WHERE id=%s"%(str(distance),now,id)
@@ -67,13 +69,14 @@ def raingauge(id,holding):
 						holding=True;
 						return holding;
 					else:
-						rate=(float(data[0]['previous'])-distance)/(now-float(data[0]['datetime']));
+						#rate=(float(data[0]['previous'])-distance)/(now-float(data[0]['datetime']));
+						rate=(float(data[0]['previous'])-distance);
 						changedLevel=float(data[0]['previous'])-distance
 						print(changedLevel)
 						#update db data on previous
 						query="UPDATE raingauge SET previous=%s,current=%s WHERE id=%s"%(distance,0,id)
 						db.insert(query);
-						motorOnTime=rate*10; #some weight value
+						motorOnTime=rate*50; #some weight value
 						query="SELECT * FROM motorSchedule WHERE old=False ORDER BY datetime DESC";
 						num,data=db.query(query);
 						
@@ -100,7 +103,6 @@ import urllib
 import urllib2
 
 def sendPrediction(delay,rise):	
-	print("here");
 	count=0;
 	while(count!=10):
 		url="http://192.168.137.1/hexflood/piinterface.php";
