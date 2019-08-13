@@ -16,7 +16,7 @@ while True:
 		db=Database();
 		now=time.time()
 		#print(now);
-		query="SELECT * FROM motorSchedule WHERE old=False ORDER BY datetime ASC"
+		query="SELECT * FROM motorSchedule WHERE old=False ORDER BY datetime ASC LIMIT 1"
 		num,data=db.query(query);
 		for row in data:
 			if(now>=float(row['datetime'])):
@@ -37,6 +37,7 @@ while True:
 				started=False;
 				GPIO.output(motorPin,GPIO.LOW);
 				print("Motor Off");
+			break;
 	except Exception as e:
 		GPIO.output(motorPin,GPIO.LOW);
 		print e.message;
